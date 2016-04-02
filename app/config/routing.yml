@@ -1,8 +1,12 @@
 app:
-    resource: "@AppBundle/Controller/"
-    type:     annotation
-    prefix:   /
+    resource: "@AppBundle/Controller/UserController.php"
+    prefix: /api/
+    type: rest
 
 NelmioApiDocBundle:
   resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
   prefix:   /api/doc
+
+index:
+     pattern:   /
+     defaults:  { _controller: AppBundle:Default:index }
