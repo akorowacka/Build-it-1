@@ -109,6 +109,7 @@ class UserController extends FOSRestController
 
         return $this->view('User added with id ' .$user->getId(), 200);;
     }
+
     /**
      * Update a current User data
      *
@@ -117,7 +118,7 @@ class UserController extends FOSRestController
      *   description = "Update a current User data",
      *   statusCodes = {
      *     200 = "Returned when successful",
-     *     500 = "Returned when the form has errors"
+     *     404 = "Returned when the user wasn't found"
      *   }
      * )
      *
@@ -149,6 +150,44 @@ class UserController extends FOSRestController
         $em->flush();
 
         return $this->view('User updated with id ' .$paramFetcher->get('id'), 200);;
+    }
+
+    /**
+     * Delete user with provided Id
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   description = "Delete user with provided Id",
+     *   statusCodes = {
+     *     200 = "Returned when successful",
+     *     404 = "Returned when the user wasn't found"
+     *   }
+     * )
+     *
+     * @param ParamFetcher $paramFetcher Paramfetcher
+     * @RequestParam(name="id", nullable=true, description="User Id")
+     * @RequestParam(name="name", nullable=true, description="Name")
+     * @RequestParam(name="surname", nullable=true, description="Surname")
+     * @RequestParam(name="email", nullable=true, description="Email")
+     * @RequestParam(name="password", nullable=true, description="Password")
+     * @RequestParam(name="avatar_url", nullable=true, description="Avatar url")
+     *
+     * @return View
+     */
+    public function deleteUsersAction(ParamFetcher $paramFetcher) {
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository('AppBundle:User')->find($paramFetcher->get('id'));
+
+        if (!$user) {
+          throw $this->createNotFoundException(
+            'No user with id ' .$paramFetcher->get('id'). ' found.'
+          );
+        }
+
+        $em->remove($user);
+        $em->flush();
+
+        return $this->view('Deleted user with id ' .$paramFetcher->get('id'), 200);;
     }
 
 }
