@@ -45,7 +45,7 @@ class UserController extends FOSRestController
     }
 
     /**
-     * Fetch all users from database
+     * Fetch user data with current login
      *
      * @ApiDoc(
      *  resource=true,
@@ -58,34 +58,7 @@ class UserController extends FOSRestController
      *     }
      * )
      */
-    public function getUserAction($userId)
-    {
-        $em = $this->getDoctrine()->getManager();
-        $entities = $em->getRepository('AppBundle:User')->find($userId);
-
-        if(!$entities)
-        {
-             return $this->view(null, 404);
-        }
-
-        return $this->view($entities, 200);
-    }
-
-    /**
-     * Fetch all users from database
-     * @Get("/users/login/{userLogin}")
-     * @ApiDoc(
-     *  resource=true,
-     *  description="Fetch user with current login from database",
-     *  statusCodes={
-     *         200="Returned when successful",
-     *         404={
-     *           "Returned when the user is not found",
-     *         }
-     *     }
-     * )
-     */
-    public function getUserLoginAction($userLogin)
+    public function getUserAction($userLogin)
     {
         $em = $this->getDoctrine()->getManager();
         $entities = $em->getRepository('AppBundle:User')->findByEmail($userLogin);
@@ -98,6 +71,7 @@ class UserController extends FOSRestController
         return $this->view($entities, 200);
     }
 
+
     /**
      * Create a User from the submitted data.
      *
@@ -106,7 +80,7 @@ class UserController extends FOSRestController
      *   description = "Creates a new user from the submitted data.",
      *   statusCodes = {
      *     200 = "Returned when successful",
-     *     400 = "Returned when the form has errors"
+     *     500 = "Returned when the form has errors"
      *   }
      * )
      *
@@ -133,8 +107,48 @@ class UserController extends FOSRestController
         $em->persist($user);
         $em->flush();
 
-        new Response('Saved new product with id '.$user->getId());
+        return $this->view('User added with id ' .$user->getId(), 200);;
     }
+    /**
+     * Update a current User data
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   description = "Update a current User data",
+     *   statusCodes = {
+     *     200 = "Returned when successful",
+     *     500 = "Returned when the form has errors"
+     *   }
+     * )
+     *
+     * @param ParamFetcher $paramFetcher Paramfetcher
+     * @RequestParam(name="id", nullable=true, description="User Id")
+     * @RequestParam(name="name", nullable=true, description="Name")
+     * @RequestParam(name="surname", nullable=true, description="Surname")
+     * @RequestParam(name="email", nullable=true, description="Email")
+     * @RequestParam(name="password", nullable=true, description="Password")
+     * @RequestParam(name="avatar_url", nullable=true, description="Avatar url")
+     *
+     * @return View
+     */
+    public function putUsersAction(ParamFetcher $paramFetcher) {
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository('AppBundle:User')->find($paramFetcher->get('id'));
 
+        if (!$user) {
+          throw $this->createNotFoundException(
+            'No user with' .$paramFetcher->get('id'). ' id found.'
+          );
+        }
+
+        if($paramFetcher->get('name')){ $user->setName($paramFetcher->get('name')); }
+        if($paramFetcher->get('surname')){ $user->setSurname($paramFetcher->get('surname')); }
+        if($paramFetcher->get('avatar_url')){ $user->setName($paramFetcher->get('avatar_url')); }
+        if($paramFetcher->get('password')){ $user->setName($paramFetcher->get('password')); }
+
+        $em->flush();
+
+        return $this->view('User updated with id ' .$paramFetcher->get('id'), 200);;
+    }
 
 }
