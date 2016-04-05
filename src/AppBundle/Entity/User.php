@@ -41,6 +41,11 @@ class User
      */
     private $password;
 
+    /**
+     * @ORM\Column(type="string", length=100)
+     */
+    private $address;
+
 
     /**
      * Get id
@@ -170,5 +175,29 @@ class User
     public function getPassword()
     {
         return $this->password;
+    }
+
+    /**
+     * Set address
+     *
+     * @param string $address
+     *
+     * @return User
+     */
+    public function setAddress($address)
+    {
+        $this->address = $address;
+
+        return $this;
+    }
+
+    /**
+     * Get address
+     *
+     * @return string
+     */
+    public function getAddress()
+    {
+        return $this->address;
     }
 }

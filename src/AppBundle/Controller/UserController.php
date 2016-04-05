@@ -91,6 +91,7 @@ class UserController extends FOSRestController
      * @RequestParam(name="email", nullable=false, description="Email")
      * @RequestParam(name="password", nullable=false, description="Password")
      * @RequestParam(name="avatar_url", nullable=true, description="Avatar url")
+     * @RequestParam(name="address", nullable=false, description="Adress")
      *
      * @return View
      */
@@ -102,6 +103,7 @@ class UserController extends FOSRestController
         $user->setSurname($paramFetcher->get('surname'));
         $user->setEmail($paramFetcher->get('email'));
         $user->setPassword($paramFetcher->get('password'));
+        $user->setAddress($paramFetcher->get('address'));
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($user);
