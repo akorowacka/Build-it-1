@@ -45,7 +45,7 @@ class UserController extends FOSRestController
     }
 
     /**
-     * Fetch user data with current login
+     * Fetch user data with current id
      *
      * @ApiDoc(
      *  resource=true,
@@ -58,10 +58,10 @@ class UserController extends FOSRestController
      *     }
      * )
      */
-    public function getUserAction($userLogin)
+    public function getUserAction($userId)
     {
         $em = $this->getDoctrine()->getManager();
-        $entities = $em->getRepository('AppBundle:User')->findByEmail($userLogin);
+        $entities = $em->getRepository('AppBundle:User')->find($userId);
 
         if(!$entities)
         {
